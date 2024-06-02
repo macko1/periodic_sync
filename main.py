@@ -1,16 +1,16 @@
-import argparse
-import configparser
-import initialize_config
-import hashlib
-from sync import run_sync
-from initialize_config import initialize_config
+from init_config import initialize_config_and_logging
+from periodic_sync import periodic_sync
 
 
 def main():
-    config = initialize_config()
-    config.logger()
-    exit(0)
-    # run_sync()
+    config = initialize_config_and_logging()
+    try:
+        config.logger.info(f"Running folder synchronization periodically every {config.time_interval} seconds\n"
+                           f"source folder: {config.input_path}\n"
+                           f"target folder: {config.output_path}\n")
+        periodic_sync(config)
+    except KeyboardInterrupt:
+        config.logger.info("Received SIGINT, exiting.")
 
 
 if __name__ == '__main__':
