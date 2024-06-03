@@ -58,11 +58,12 @@ def sync(config: Config):
         1. if a directory
             a) in input_dir_set is not in output_dir_set -> create the missing directory
             b) in output_dir_set is not in input_dir_set -> delete the directory, recursively
-        2. if a filename in input_file_set
+        2. if filename in output_file_set
+            a) is not in input_file_set - delete it
+        3. if a filename in input_file_set
             a) is not in output_file_set -> copy the file (create directories recursively)
             b) is in output_file_set -> check the hash and overwrite the file if it differs
-        3. if filename in output_file_set
-            a) is not in input_file_set - delete it
+
         """
 
         """
@@ -113,7 +114,7 @@ def sync(config: Config):
             file_dst.unlink(missing_ok=True)
 
         """
-        2b. Copy missing files (parent directories should exist now)
+        3a. Copy missing files (parent directories should exist now)
         """
         for file_missing in files_missing_relative:
             # Reconstruct the absolute paths
@@ -122,7 +123,7 @@ def sync(config: Config):
             config.logger.info(f"Copying missing file {file_missing}")
             shutil.copyfile(file_src, file_dst)
         """
-        Calculate hashes for files of input and output files now, and overwrite files that differ
+        3b. Calculate hashes for files of input and output files now, and overwrite files that differ
         """
         _, output_file_set = create_relative_file_and_directory_name_sets(config.output_path)
         for file in input_file_set:
