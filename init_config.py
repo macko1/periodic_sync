@@ -27,7 +27,7 @@ class Config:
         """
         if os.path.exists(self.log_path):
             os.remove(self.log_path)
-        self.logger = logging.getLogger('__name__')  # __main__
+        self.logger = logging.getLogger('__name__')
         logging.basicConfig(level=logging.DEBUG,
                             format="%(asctime)s [%(levelname)s] %(message)s",
                             handlers=[
@@ -45,11 +45,13 @@ def parse_arguments():
     4. access the parameters under args.<argument>
 
     Folder paths, synchronization interval and log file path
+
+    :return: Parsed arguments
     """
     # Parse the parameters from the parser object
 
     parser = argparse.ArgumentParser(
-        description="Periodically synchronizes a source folder '--input-path', to a target folder '--output-path'. ",
+        description="Periodically synchronizes a source folder '--input-path', to a target folder '--output-path'.",
         add_help=True
     )
     parser.add_argument(
@@ -64,7 +66,7 @@ def parse_arguments():
         "--output-path",
         type=Path,
         required=True,
-        help="Output path. The contents of this path will be synchronized with the input path."
+        help="Output path. The contents of this path will be overwritten by content in the input path."
     )
 
     parser.add_argument(

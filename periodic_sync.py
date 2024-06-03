@@ -18,7 +18,8 @@ def file_hash(path: Path):
     sha256_hash = hashlib.new('sha256')
     with open(path, "rb") as f:
         """
-        Use 4096 chunks for efficiency - iterate until the last chunk is an empty bytestring
+        Use 4096 chunks for efficiency - iterate until the last chunk 
+        is an empty bytestring
         """
         for byte_chunk in iter(lambda: f.read(4096), b""):
             sha256_hash.update(byte_chunk)
@@ -89,8 +90,8 @@ def sync(config: Config):
         for dir_to_delete in dirs_redundant_relative:
 
             """
-            Delete the files from the files_redundant_relative (as they wont't exist anymore)
-            Has to be first, as dir_to_delete is converted to a full path
+            Delete the files from the files_redundant_relative set (as they wont't exist anymore)
+            Has to be first, as dir_to_delete is converted to a full path afterwards
             """
             files_redundant_relative = \
                 {file for file in files_redundant_relative if not file.is_relative_to(dir_to_delete)}
@@ -107,7 +108,7 @@ def sync(config: Config):
         for file_to_delete in files_redundant_relative:
             # Reconstruct the full path to the file
             file_dst = config.output_path.joinpath(file_to_delete)
-            config.logger.info(f"Removing redundant file in source dest: {file_to_delete}")
+            config.logger.info(f"Removing redundant file: {file_to_delete}")
 
             file_dst.unlink(missing_ok=True)
 
@@ -166,7 +167,7 @@ def sync(config: Config):
 def periodic_scheduler(scheduler, interval, function_to_schedule, config):
     """
     A helper function that enables periodic scheduling (it recursively schedules itself
-    along with the function that should be periodically executed)
+    along with the function that is to be periodically executed)
     """
     scheduler.enter(delay=interval,
                     priority=1,
@@ -178,9 +179,8 @@ def periodic_scheduler(scheduler, interval, function_to_schedule, config):
 
 def periodic_sync(config: Config):
     """
-    Schedules sync as per time interval received from the CLI.
+    Schedules sync as per --time-interval (in seconds) received from the CLI.
     :param config:
-    :return:
     """
     s = sched.scheduler(time.time, time.sleep)
     periodic_scheduler(scheduler=s,
